@@ -39,4 +39,4 @@
 **How I verified no conflict remains:** Ran git log --oneline --merges feature/watchlist and confirmed the only merge commit present (bbe206c) predates my branch and belongs to main's own history so no new merge commit was introduced and we can confirm the rebase produced a linear history rather than a merge. I ran pytest tests/ -v and all tests passed. Pushed with `git push --force-with-lease origin feature/watchlist` since the rebase rewrote my commit history.
 
 ## PR Description
-<!-- Written at the end — feature overview, design decisions, manual testing steps -->
+!(log.png)
