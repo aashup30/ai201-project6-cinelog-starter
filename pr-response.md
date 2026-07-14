@@ -32,9 +32,11 @@
 **Engagement with reviewer's point:** I agree with the reviewer generally due to my reasoning above. A potential counterargument is that users with over 100 movies may want to be able to search by name instead of when they watched it but I'm making a base assumption that recency is more important and a new filter to sort alphabetically could be added later after we gain users and maintain the service long enough for users to actually hit large numbers of movies. One thing to note is that if users want to backdate when they saw a movie, it shouldn't just default to the day the review was written.
 
 ## Comment 6 — Rebase
-**What conflicted:**
-**How I resolved it:**
-**How I verified no conflict remains:**
+**What conflicted:** I ran git fetch origin and git rebase origin/main. The first  conflict was in .gitignore because both branches had one so I merged them into a single list. The other was main's UUID-refactor commit (07ca580) had deleted the entire WatchlistEntry model from models.py since main never had the watchlist feature to begin with. After the rebase completed, models.py had no WatchlistEntry class at all even though services/watchlist_service.py still imported and used it.
+
+**How I resolved it:** For the .gitignore conflict, I manually merged both lists and removed the conflict markers, then ran git add .gitignore and git rebase --continue. After the rebase finished, I manually re-added WatchlistEntry to models.py, changing film_id from db.Integer to db.String(36) so it matches the UUID type now used by Film.id and CollectionEntry.film_id. I also updated the remaining references like the film_id docstring in add_to_watchlist() (now describes a UUID string instead of an int), and the fake_film_id in tests/test_watchlist.py, which I changed from 999999 to a UUID-shaped string "00000000-0000-0000-0000-000000000000" to match the new type.
+
+**How I verified no conflict remains:** Ran git log --oneline --merges feature/watchlist and confirmed the only merge commit present (bbe206c) predates my branch and belongs to main's own history so no new merge commit was introduced and we can confirm the rebase produced a linear history rather than a merge. I ran pytest tests/ -v and all tests passed. Pushed with `git push --force-with-lease origin feature/watchlist` since the rebase rewrote my commit history.
 
 ## PR Description
 <!-- Written at the end — feature overview, design decisions, manual testing steps -->
