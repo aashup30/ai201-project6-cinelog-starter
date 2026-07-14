@@ -1,7 +1,8 @@
 # PR Response Doc — CineLog Watchlist Feature
 
 ## AI Usage
-<!-- Fill in at the end — how you used AI tools during this project -->
+## AI Usage
+I used AI to check my commit history after rewriting it into conventional commit format. After rebasing onto main and cleaning up messages with `git rebase -i`, I asked the AI to review the final commit list against the project's contribution standards (feat/fix/test/docs prefixes, one logical change per commit, no merge commits) and flag anything that didn't fit and it caught that I'd misspelled a prefix on the rename commit, which isn't one of the allowed prefixes, so I changed it to `fix:` to match the standard. I made the actual judgment calls myself (what each commit's message should say, which prefix fit which change), but used the AI as a second pair of eyes to verify the final list matched the stated conventions before pushing.
 
 ## Comment 1 — Rename
 **What I did:** Renamed save_to_watchlist() to add_to_watchlist() in services/watchlist_service.py, then updated the single call site in routes/watchlist/watchlist.py to use the new name.
@@ -56,7 +57,5 @@ Adds a watchlist feature, letting users save films they want to watch later, sep
    - Repeat the same request — should return 409-equivalent behavior via `AlreadyInWatchlistError` (currently unhandled at the route level — see open item below).
    - `GET /watchlist/<user_id>` — should return films sorted newest-added first.
 
-## Known follow-up
-`routes/watchlist/watchlist.py` doesn't yet catch `AlreadyInWatchlistError`, so a duplicate-add currently surfaces as a 500 rather than a 409 like the collection route. Flagged for a follow-up PR.
 
-!(log.png)
+![](log.png)
