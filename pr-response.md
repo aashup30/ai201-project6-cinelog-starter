@@ -39,4 +39,24 @@
 **How I verified no conflict remains:** Ran git log --oneline --merges feature/watchlist and confirmed the only merge commit present (bbe206c) predates my branch and belongs to main's own history so no new merge commit was introduced and we can confirm the rebase produced a linear history rather than a merge. I ran pytest tests/ -v and all tests passed. Pushed with `git push --force-with-lease origin feature/watchlist` since the rebase rewrote my commit history.
 
 ## PR Description
+## Overview
+Adds a watchlist feature, letting users save films they want to watch later, separate from their collection (films already watched). 
+
+## Design decisions
+
+- **Default visibility:** Watchlist entries default to public=True full reasoning and the acknowledged privacy tradeoff are in pr-response.md comment 4.
+- **Sort order:** `get_watchlist()` sorts by date added (most recent first) rather than alphabetically, matching `get_collection()`'s convention and the recency-driven nature of a "want to watch" queue. Tradeoffs around long-list scannability are documented in pr-response.md under comment 5.
+
+
+## Manual testing
+1. `pip install -r requirements.txt`
+2. `pytest tests/ -v` — all tests should pass (collection + watchlist).
+3. Run the app locally, then:
+   - `POST /watchlist/<user_id>/add` with `{"film_id": "<uuid>"}` — should create an entry (201).
+   - Repeat the same request — should return 409-equivalent behavior via `AlreadyInWatchlistError` (currently unhandled at the route level — see open item below).
+   - `GET /watchlist/<user_id>` — should return films sorted newest-added first.
+
+## Known follow-up
+`routes/watchlist/watchlist.py` doesn't yet catch `AlreadyInWatchlistError`, so a duplicate-add currently surfaces as a 500 rather than a 409 like the collection route. Flagged for a follow-up PR.
+
 !(log.png)
